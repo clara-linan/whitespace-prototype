@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizon — Pipeline Qualification Tool · Portfolio Demo</title>
+  <meta name="description" content="Portfolio demonstration of an enterprise pipeline qualification tool. All data is synthetic and fictional.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="assets/lib/xlsx-js-style.min.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- DEMO DISCLAIMER BANNER (persistent, always visible)                       -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="demo-banner">
+  ⚠ Portfolio Demonstration Environment — All data is synthetic and fictional. Not affiliated with or endorsed by any employer.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- TOPBAR                                                                    -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-brand">
+      <div class="topbar-logo-mark">H</div>
+      <div>
+        <div class="topbar-product-name">Horizon</div>
+        <div class="topbar-product-sub">Pipeline Intelligence</div>
+      </div>
+    </div>
+    <div class="topbar-divider"></div>
+    <select id="dashboard-switcher">
+      <option value="sp">Whitespace</option>
+      <option value="cas">Adoption Services</option>
+    </select>
+  </div>
+  <div class="topbar-right">
+    <span id="sp-download-btns">
+      <button id="btn-download-new" class="export-btn" disabled>&#8659; Download New</button>
+      <button id="btn-download-all" class="btn-ghost" style="font-size:12px;color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.2);background:transparent;" disabled>&#8659; Download All</button>
+    </span>
+    <span id="cas-download-btns" hidden>
+      <button id="cas-btn-download-all" class="export-btn" disabled>&#8659; Download CAS</button>
+    </span>
+    <div id="user-avatar" title="Demo User">DU</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL OVERLAY                                                             -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="modal-overlay" hidden></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- DISCLAIMER MODAL (shown on first load, requires acknowledgement)          -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="disclaimer-modal" hidden>
+  <div class="disclaimer-icon">⚠️</div>
+  <h2>Portfolio Demonstration Environment</h2>
+  <p>Before you proceed, please note:</p>
+  <div class="disclaimer-body">
+    This application is a <strong>personal portfolio project</strong> inspired by internal tooling concepts.
+    All data displayed is <strong>synthetic, fictional, and generated for demonstration purposes only</strong>.
+    No customer, employee, company, or proprietary information is included.
+    Any similarities to real people, organizations, or data are purely coincidental.
+    <br><br>
+    This project is not affiliated with or endorsed by any current or past employer.
+  </div>
+  <p style="font-size:12px;color:var(--grey-5);">
+    The fictional company "Nexus Systems" and all accounts, opportunities, and metrics shown are entirely fabricated.
+  </p>
+  <button id="btn-acknowledge">I understand — Show the Demo</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SP QUALIFY OUT MODAL                                                      -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="modal-qualify-out" hidden>
+  <h3>Qualify Out — Enter Reason</h3>
+  <p>Provide a reason so your team knows why this opportunity was discarded.</p>
+  <label for="modal-qualify-out-reason" style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">
+    Reason <span style="color:var(--red-6)">*</span>
+  </label>
+  <textarea id="modal-qualify-out-reason" rows="3" placeholder="e.g. Already under contract, customer deferred, out of scope…"></textarea>
+  <div id="modal-reason-error" class="modal-error" hidden>A reason is required.</div>
+  <div class="modal-actions">
+    <button id="modal-qualify-out-cancel" class="btn-ghost">Cancel</button>
+    <button id="modal-qualify-out-confirm" class="btn-qualify-out" style="background:var(--red-6);color:#fff;border-color:var(--red-6);">Confirm Qualify Out</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- CAS QUALIFY OUT MODAL                                                     -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="cas-modal-qualify-out" hidden>
+  <h3>Qualify Out — Enter Reason</h3>
+  <p>This reason will appear on the Qualified Out tab.</p>
+  <label for="cas-qualify-out-reason" style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">
+    Reason <span style="color:var(--red-6)">*</span>
+  </label>
+  <textarea id="cas-qualify-out-reason" rows="3" placeholder="e.g. Existing adoption plan in place, customer deferred…"></textarea>
+  <div id="cas-qualify-out-error" class="modal-error" hidden>A reason is required.</div>
+  <div class="modal-actions">
+    <button id="cas-qualify-out-cancel" class="btn-ghost">Cancel</button>
+    <button id="cas-qualify-out-submit" class="btn-qualify-out" style="background:var(--red-6);color:#fff;border-color:var(--red-6);">Confirm Qualify Out</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- LOADING SPINNER                                                           -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="loading-spinner" hidden><div class="spinner"></div></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SP WHITESPACE DASHBOARD                                                   -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="sp-dashboard" hidden>
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-section-label">Nexus Systems · North America</div>
+      <div class="page-title">Whitespace Opportunities</div>
+      <div class="page-subtitle">Identify, qualify, and track open pipeline whitespace by account and solution area.</div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="stat-num" id="stat-pipeline">—</div>
+          <div class="stat-label">Potential Pipeline</div>
+          <div class="stat-helper">Opp value of whitespace + qualified in</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num teal" id="stat-whitespace">—</div>
+          <div class="stat-label">Whitespace Cards</div>
+          <div class="stat-helper">Qualifying, not yet actioned</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num amber" id="stat-pct">—</div>
+          <div class="stat-label">% Remaining</div>
+          <div class="stat-helper">Not yet reviewed</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num green" id="stat-qualified">0</div>
+          <div class="stat-label">Qualified In</div>
+          <div class="stat-helper">Marked as in-motion</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num red" id="stat-qualout">0</div>
+          <div class="stat-label">Qualified Out</div>
+          <div class="stat-helper">Discarded with reason</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num grey" id="stat-total">—</div>
+          <div class="stat-label">Total Cards</div>
+          <div class="stat-helper">All qualifying rows</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div id="diff-banner"  class="banner banner--diff"  hidden></div>
+    <div id="error-banner" class="banner banner--error" hidden></div>
+
+    <div id="filter-bar"></div>
+
+    <div class="table-card">
+      <div class="table-card-inner">
+
+      <div class="table-tabs">
+        <button class="table-tab active" data-tab="whitespace">
+          Whitespace
+          <span class="table-tab-badge" id="tab-count-whitespace">0</span>
+        </button>
+        <button class="table-tab" data-tab="qualified-in">
+          Qualified In
+          <span class="table-tab-badge" id="tab-count-qualified-in">0</span>
+        </button>
+        <button class="table-tab" data-tab="qualified-out">
+          Qualified Out
+          <span class="table-tab-badge" id="tab-count-qualified-out">0</span>
+        </button>
+      </div>
+
+      <!-- Column headers for Whitespace tab -->
+      <div class="whitespace-col-header" id="whitespace-col-header">
+        <span></span>
+        <span>Account</span>
+        <span>Solution Area</span>
+        <span>AE</span>
+        <span>Segment</span>
+        <span style="text-align:right">Eligible ACV</span>
+        <span style="text-align:center">Opps</span>
+        <span>Tier</span>
+        <span style="text-align:right">Opp Value</span>
+        <span></span>
+      </div>
+
+      <div id="tab-content"></div>
+
+      </div><!-- /.table-card-inner -->
+    </div>
+
+    <section class="summary-log-section">
+      <div class="summary-log-header"
+           onclick="const l=this.nextElementSibling;l.hidden=!l.hidden;this.querySelector('.log-chevron').textContent=l.hidden?'▼':'▲'">
+        <span>Data Quality Log</span>
+        <span class="log-chevron">▼</span>
+      </div>
+      <div id="summary-log" hidden></div>
+    </section>
+
+  </div>
+
+  <footer>
+    <span class="footer-text">Horizon Pipeline Intelligence · Nexus Systems (fictional)</span>
+    <span class="footer-disclaimer">⚠ All data is synthetic — portfolio demo only</span>
+    <span class="footer-text">Data is generated in-browser from seed scripts — no server, no real records</span>
+  </footer>
+
+</div><!-- /#sp-dashboard -->
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- CAS / ADOPTION SERVICES DASHBOARD                                         -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="cas-dashboard" hidden>
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-section-label">Nexus Systems · Customer Adoption Services</div>
+      <div class="page-title">Adoption Services Whitespace</div>
+      <div class="page-subtitle">Identify and qualify open adoption services opportunities by account and solution area.</div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="stat-num" id="cas-stat-acv">—</div>
+          <div class="stat-label">Cloudified ACV</div>
+          <div class="stat-helper">Whitespace + qualified in</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num teal" id="cas-stat-whitespace">—</div>
+          <div class="stat-label">Whitespace Cards</div>
+          <div class="stat-helper">Not yet actioned</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num green" id="cas-stat-qualified">0</div>
+          <div class="stat-label">Qualified In</div>
+          <div class="stat-helper">Marked as in-motion</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num red" id="cas-stat-qualout">0</div>
+          <div class="stat-label">Qualified Out</div>
+          <div class="stat-helper">Discarded with reason</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num grey" id="cas-stat-total">—</div>
+          <div class="stat-label">Total Cards</div>
+          <div class="stat-helper">All Account + Sol Area cards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div id="cas-filter-bar"></div>
+
+    <div class="table-card" id="cas-table-card">
+      <div class="table-card-inner">
+
+      <div class="table-tabs">
+        <button class="cas-tab active" data-tab="whitespace">Whitespace</button>
+        <button class="cas-tab" data-tab="qualified-in">Qualified In</button>
+        <button class="cas-tab" data-tab="qualified-out">Qualified Out</button>
+      </div>
+
+      <!-- CAS Whitespace column header -->
+      <div class="whitespace-col-header" id="cas-whitespace-col-header">
+        <span></span>
+        <span>Account</span>
+        <span>Solution Area</span>
+        <span>AE</span>
+        <span>Segment</span>
+        <span style="text-align:right">Cloudified ACV</span>
+        <span style="text-align:center">Opps</span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div id="cas-tab-content"></div>
+
+      </div><!-- /.table-card-inner -->
+    </div>
+
+  </div>
+
+  <footer>
+    <span class="footer-text">Horizon Pipeline Intelligence · Nexus Systems (fictional)</span>
+    <span class="footer-disclaimer">⚠ All data is synthetic — portfolio demo only</span>
+  </footer>
+
+</div><!-- /#cas-dashboard -->
+
+<!-- ── Scripts (load order matters) ───────────────────────────────────────── -->
+<script src="data/seed.js"></script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/pipeline.js"></script>
+<script src="assets/js/display.js"></script>
+<script src="assets/js/export.js"></script>
+<script src="assets/js/cas-state.js"></script>
+<script src="assets/js/cas-display.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
