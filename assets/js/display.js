@@ -227,6 +227,7 @@ function buildQualifiedCardRow(cardGroups, tabContext) {
     : '';
 
   row.innerHTML = `
+    <span></span>
     <span class="sol-customer-name">${escapeHtml(first.customerName)}</span>
     <span class="sol-area">${escapeHtml(solArea)}</span>
     <span class="opp-ae">${escapeHtml(first.sae || 'Unassigned')}</span>

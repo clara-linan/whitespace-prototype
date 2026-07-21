@@ -683,7 +683,7 @@ textarea:focus { border-color: var(--brand-6); box-shadow: 0 0 0 3px rgba(37,99,
 
 .solution-row--qualified-in,
 .solution-row--qualified-out {
-  grid-template-columns: minmax(130px,1.5fr) minmax(160px,1.8fr) 110px 110px 110px 44px 90px 100px minmax(140px,auto);
+  grid-template-columns: 20px minmax(130px,1.5fr) minmax(160px,1.8fr) 110px 110px 110px 44px 90px 100px minmax(140px,auto);
   padding-left: 20px;
 }
 .solution-row--qualified-in  { border-left: 3px solid var(--green-6); }
