@@ -179,7 +179,7 @@ window.HorizonApp = (() => {
       btn.classList.toggle('active', btn.dataset.tab === tab);
     });
     const colHeader = document.getElementById('whitespace-col-header');
-    if (colHeader) colHeader.hidden = tab !== 'whitespace';
+    if (colHeader) colHeader.hidden = false;
     renderActiveTab(tab, _pipelineData);
     _updateTabCounts();
   }

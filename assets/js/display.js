@@ -174,7 +174,6 @@ function renderQualifiedInTab(container) {
     container.innerHTML = '<div class="truffle-empty">No opportunities have been qualified in yet.</div>';
     return;
   }
-  container.appendChild(_buildQualifiedColHeader(false));
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
   for (const [, cardGroups] of groupByCard(groups)) {
@@ -191,31 +190,12 @@ function renderQualifiedOutTab(container) {
     container.innerHTML = '<div class="truffle-empty">No opportunities have been qualified out yet.</div>';
     return;
   }
-  container.appendChild(_buildQualifiedColHeader(true));
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
   for (const [, cardGroups] of groupByCard(groups)) {
     list.appendChild(buildQualifiedCardRow(cardGroups, 'qualified-out'));
   }
   container.appendChild(list);
-}
-
-function _buildQualifiedColHeader(showReason) {
-  const h = document.createElement('div');
-  h.className = 'whitespace-col-header qualified-col-header';
-  h.innerHTML = `
-    <span>Account</span>
-    <span>Solution Area</span>
-    <span>AE</span>
-    <span>Segment</span>
-    <span style="text-align:right">Eligible ACV</span>
-    <span style="text-align:center">Opps</span>
-    <span>Tier</span>
-    <span style="text-align:right">Opp Value</span>
-    <span>${showReason ? 'Reason' : ''}</span>
-    <span></span>
-  `;
-  return h;
 }
 
 // ─── Qualified card row (one row per Account + Sol Area card) ─────────────────
