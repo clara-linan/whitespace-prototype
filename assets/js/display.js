@@ -174,6 +174,7 @@ function renderQualifiedInTab(container) {
     container.innerHTML = '<div class="truffle-empty">No opportunities have been qualified in yet.</div>';
     return;
   }
+  container.appendChild(_buildQualifiedColHeader(false));
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
   for (const [, cardGroups] of groupByCard(groups)) {
@@ -190,12 +191,31 @@ function renderQualifiedOutTab(container) {
     container.innerHTML = '<div class="truffle-empty">No opportunities have been qualified out yet.</div>';
     return;
   }
+  container.appendChild(_buildQualifiedColHeader(true));
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
   for (const [, cardGroups] of groupByCard(groups)) {
     list.appendChild(buildQualifiedCardRow(cardGroups, 'qualified-out'));
   }
   container.appendChild(list);
+}
+
+function _buildQualifiedColHeader(showReason) {
+  const h = document.createElement('div');
+  h.className = 'whitespace-col-header qualified-col-header';
+  h.innerHTML = `
+    <span>Account</span>
+    <span>Solution Area</span>
+    <span>AE</span>
+    <span>Segment</span>
+    <span style="text-align:right">Eligible ACV</span>
+    <span style="text-align:center">Opps</span>
+    <span>Tier</span>
+    <span style="text-align:right">Opp Value</span>
+    <span>${showReason ? 'Reason' : ''}</span>
+    <span></span>
+  `;
+  return h;
 }
 
 // ─── Qualified card row (one row per Account + Sol Area card) ─────────────────
@@ -229,8 +249,10 @@ function buildQualifiedCardRow(cardGroups, tabContext) {
   row.innerHTML = `
     <span class="sol-customer-name">${escapeHtml(first.customerName)}</span>
     <span class="sol-area">${escapeHtml(solArea)}</span>
-    <span style="font-size:12px;color:var(--grey-6)">${oppCount} opp${oppCount !== 1 ? 's' : ''}</span>
+    <span class="opp-ae">${escapeHtml(first.sae || 'Unassigned')}</span>
+    <span class="opp-sales-segment">${escapeHtml(first.salesSegment || '')}</span>
     <span class="sol-eligible-acv">${formatUSD(totalAcv)}</span>
+    <span style="font-size:12px;color:var(--grey-6);text-align:center">${oppCount}</span>
     <select class="recommendation-select" data-cardkey="${escapeHtml(cardKey)}">
       <option value="Standard"${rec === 'Standard' ? ' selected' : ''}>Standard</option>
       <option value="Enhanced"${rec === 'Enhanced' ? ' selected' : ''}>Enhanced</option>
