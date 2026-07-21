@@ -176,7 +176,9 @@ function renderQualifiedInTab(container) {
   }
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
-  for (const group of groups) list.appendChild(buildQualifiedRow(group, 'qualified-in'));
+  for (const [, cardGroups] of groupByCard(groups)) {
+    list.appendChild(buildQualifiedCardRow(cardGroups, 'qualified-in'));
+  }
   container.appendChild(list);
 }
 
@@ -190,25 +192,31 @@ function renderQualifiedOutTab(container) {
   }
   const list = document.createElement('div');
   list.className = 'truffle-flat-list';
-  for (const group of groups) list.appendChild(buildQualifiedRow(group, 'qualified-out'));
+  for (const [, cardGroups] of groupByCard(groups)) {
+    list.appendChild(buildQualifiedCardRow(cardGroups, 'qualified-out'));
+  }
   container.appendChild(list);
 }
 
-// ─── Qualified flat row ───────────────────────────────────────────────────────
+// ─── Qualified card row (one row per Account + Sol Area card) ─────────────────
 
-function buildQualifiedRow(group, tabContext) {
-  const key        = group.key;
-  const cardKey    = group.isFSM
-    ? `${group.customerName}|${group.l2}|${group.l3}`
-    : `${group.customerName}|${group.l2}`;
-  const rec      = AppState.getCardRecommendation(cardKey);
-  const oppValue = calcOppValue(group.eligibleAcv, rec);
-  const reason   = AppState.getQualifyOutReason(key);
-  const isHist   = !!group._historical;
+function buildQualifiedCardRow(cardGroups, tabContext) {
+  const first    = cardGroups[0];
+  const cardKey  = first.isFSM
+    ? `${first.customerName}|${first.l2}|${first.l3}`
+    : `${first.customerName}|${first.l2}`;
+  const groupKeys = cardGroups.map(g => g.key);
+  const totalAcv  = cardGroups.reduce((s, g) => s + g.eligibleAcv, 0);
+  const rec       = AppState.getCardRecommendation(cardKey);
+  const oppValue  = calcOppValue(totalAcv, rec);
+  const solArea   = first.isFSM ? `${first.l2} / ${first.l3}` : first.l2;
+  const oppCount  = new Set(cardGroups.map(g => g.oppId)).size;
+  // Qualify-out reason comes from the first key (all keys in a card share the same reason)
+  const reason    = AppState.getQualifyOutReason(first.key);
+  const isHist    = !!first._historical;
 
   const row = document.createElement('div');
   row.className = `solution-row solution-row--${tabContext}${isHist ? ' solution-row--historical' : ''}`;
-  row.dataset.key = key;
 
   const reasonHtml = (tabContext === 'qualified-out' && reason)
     ? `<span class="sol-qualify-out-reason"><strong>Reason:</strong> ${escapeHtml(reason)}</span>`
@@ -219,10 +227,10 @@ function buildQualifiedRow(group, tabContext) {
     : '';
 
   row.innerHTML = `
-    <span class="sol-customer-name">${escapeHtml(group.customerName)}</span>
-    <span class="opp-id-link">${escapeHtml(group.oppId)}</span>
-    <span class="sol-area">${escapeHtml(group.isFSM ? `${group.l2} / ${group.l3}` : group.l2)}</span>
-    <span class="sol-eligible-acv">${formatUSD(group.eligibleAcv)}</span>
+    <span class="sol-customer-name">${escapeHtml(first.customerName)}</span>
+    <span class="sol-area">${escapeHtml(solArea)}</span>
+    <span style="font-size:12px;color:var(--grey-6)">${oppCount} opp${oppCount !== 1 ? 's' : ''}</span>
+    <span class="sol-eligible-acv">${formatUSD(totalAcv)}</span>
     <select class="recommendation-select" data-cardkey="${escapeHtml(cardKey)}">
       <option value="Standard"${rec === 'Standard' ? ' selected' : ''}>Standard</option>
       <option value="Enhanced"${rec === 'Enhanced' ? ' selected' : ''}>Enhanced</option>
@@ -231,7 +239,7 @@ function buildQualifiedRow(group, tabContext) {
     ${reasonHtml}
     ${histBadge}
     <span class="sol-actions">
-      <button class="btn-undo" data-key="${escapeHtml(key)}">Undo</button>
+      <button class="btn-undo" data-keys="${escapeHtml(JSON.stringify(groupKeys))}">Undo</button>
     </span>
   `;
 
@@ -239,7 +247,7 @@ function buildQualifiedRow(group, tabContext) {
     const tier = e.target.value;
     AppState.setCardRecommendation(cardKey, tier);
     row.querySelector(`.sol-opp-value[data-cardkey="${cardKey}"]`).textContent =
-      formatUSD(calcOppValue(group.eligibleAcv, tier));
+      formatUSD(calcOppValue(totalAcv, tier));
     updateDownloadButtons();
   });
 

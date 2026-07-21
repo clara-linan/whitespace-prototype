@@ -215,8 +215,12 @@ window.HorizonApp = (() => {
   function bindActionButtons() {
     document.getElementById('tab-content')?.addEventListener('click', e => {
       if (e.target.matches('.btn-undo')) {
-        const key = e.target.dataset.key;
-        if (AppState.undo(key)) { _saveQualState(); rerender(); }
+        const keys = JSON.parse(e.target.dataset.keys || '[]');
+        let undone = false;
+        for (const key of keys) {
+          if (AppState.undo(key)) undone = true;
+        }
+        if (undone) { _saveQualState(); rerender(); }
       }
     });
   }
