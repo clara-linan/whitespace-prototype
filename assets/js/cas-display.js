@@ -76,7 +76,7 @@ function renderCasTab(tab) {
       container.appendChild(buildCasWhitespaceRow(card));
     }
   } else if (tab === 'qualified-in') {
-    if (casColHeader) casColHeader.hidden = true;
+    if (casColHeader) casColHeader.hidden = false;
     const cards = CasState.getQualifiedInCards();
     if (!cards.length) {
       container.innerHTML = '<div class="truffle-empty">No CAS opportunities qualified in yet.</div>';
@@ -87,7 +87,7 @@ function renderCasTab(tab) {
     for (const card of cards) list.appendChild(buildCasQualifiedRow(card, 'qualified-in'));
     container.appendChild(list);
   } else if (tab === 'qualified-out') {
-    if (casColHeader) casColHeader.hidden = true;
+    if (casColHeader) casColHeader.hidden = false;
     const cards = CasState.getQualifiedOutCards();
     if (!cards.length) {
       container.innerHTML = '<div class="truffle-empty">No CAS opportunities qualified out yet.</div>';
@@ -140,20 +140,26 @@ function buildCasQualifiedRow(card, tabContext) {
   const solArea = card.isFSM ? `${card.l2} / ${card.l3}` : card.l2;
 
   const row = document.createElement('div');
-  row.className = `solution-row solution-row--${tabContext} cas-row`;
+  row.className = `opp-header opp-header--${tabContext}`;
+  row.style.cursor = 'default';
 
   const reasonHtml = (tabContext === 'qualified-out' && reason)
     ? `<span class="sol-qualify-out-reason"><strong>Reason:</strong> ${escapeHtml(reason)}</span>`
     : '';
 
   row.innerHTML = `
-    <span class="sol-customer-name">${escapeHtml(card.customerName)}</span>
-    <span class="sol-area">${escapeHtml(solArea)}</span>
-    <span class="sol-eligible-acv">${formatUSD(card.cloudifiedAcv)}</span>
+    <span></span>
+    <span class="opp-customer-name">${escapeHtml(card.customerName)}</span>
+    <span class="opp-sol-area">${escapeHtml(solArea)}</span>
     <span class="opp-ae">${escapeHtml(card.sae || 'Unassigned')}</span>
-    ${reasonHtml}
-    <span class="sol-actions">
+    <span class="opp-sales-segment">${escapeHtml(card.salesSegment || '')}</span>
+    <span class="opp-eligible-acv">${formatUSD(card.cloudifiedAcv)}</span>
+    <span class="opp-solution-count">${card.numOpps}</span>
+    <span></span>
+    <span></span>
+    <span class="opp-group-buttons">
       <button class="btn-undo cas-undo-btn" data-key="${escapeHtml(card.cardKey)}">Undo</button>
+      ${reasonHtml}
     </span>
   `;
 
