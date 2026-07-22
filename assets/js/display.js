@@ -216,8 +216,8 @@ function buildQualifiedCardRow(cardGroups, tabContext) {
   const isHist    = !!first._historical;
 
   const row = document.createElement('div');
-  row.className = `solution-row solution-row--${tabContext}${isHist ? ' solution-row--historical' : ''}`;
-
+  row.className = `opp-header opp-header--${tabContext}${isHist ? ' solution-row--historical' : ''}`;
+  row.style.cursor = 'default';
   const reasonHtml = (tabContext === 'qualified-out' && reason)
     ? `<span class="sol-qualify-out-reason"><strong>Reason:</strong> ${escapeHtml(reason)}</span>`
     : '';
@@ -240,9 +240,9 @@ function buildQualifiedCardRow(cardGroups, tabContext) {
     </select>
     <span class="opp-card-value" data-cardkey="${escapeHtml(cardKey)}">${formatUSD(oppValue)}</span>
     <span class="opp-group-buttons">
+      <button class="btn-undo" data-keys="${escapeHtml(JSON.stringify(groupKeys))}">Undo</button>
       ${reasonHtml}
       ${histBadge}
-      <button class="btn-undo" data-keys="${escapeHtml(JSON.stringify(groupKeys))}">Undo</button>
     </span>
   `;
 
