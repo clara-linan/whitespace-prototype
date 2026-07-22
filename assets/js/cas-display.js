@@ -112,6 +112,7 @@ function buildCasWhitespaceRow(card) {
     <span class="opp-customer-name">${escapeHtml(card.customerName)}</span>
     <span class="opp-sol-area">${escapeHtml(solArea)}</span>
     <span class="opp-ae">${escapeHtml(card.sae || 'Unassigned')}</span>
+    <span class="opp-sales-segment">${escapeHtml(card.salesSegment || '')}</span>
     <span class="opp-eligible-acv">${formatUSD(card.cloudifiedAcv)}</span>
     <span class="opp-solution-count">${card.numOpps}</span>
     <span></span>
