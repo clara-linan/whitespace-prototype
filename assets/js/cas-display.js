@@ -2,12 +2,13 @@
  * cas-display.js — DOM rendering for the CAS (Customer Adoption) dashboard.
  */
 
-const CasFilterState = { ae: [], account: [], solArea: [] };
+const CasFilterState = { ae: [], account: [], solArea: [], segment: [] };
 
 function renderCasFilterBar(cards) {
   const aeVals      = [...new Set(cards.map(c => c.sae).filter(Boolean))].sort();
   const accountVals = [...new Set(cards.map(c => c.customerName).filter(Boolean))].sort();
   const solAreaVals = [...new Set(cards.map(c => c.l2).filter(Boolean))].sort();
+  const segmentVals = [...new Set(cards.map(c => c.salesSegment).filter(Boolean))].sort();
 
   const bar = document.getElementById('cas-filter-bar');
   if (!bar) return;
@@ -25,11 +26,15 @@ function renderCasFilterBar(cards) {
       <label>Solution Area</label>
       ${_casTypeaheadHtml('cas-filter-solarea', 'Filter by Solution Area…')}
     </div>
+    <div class="filter-group">
+      <label>Segment</label>
+      ${_casTypeaheadHtml('cas-filter-segment', 'Filter by Segment…')}
+    </div>
     <button id="btn-cas-clear-filters" class="btn-ghost">Clear</button>
   `;
 
   bar.querySelector('#btn-cas-clear-filters').addEventListener('click', () => {
-    CasFilterState.ae = []; CasFilterState.account = []; CasFilterState.solArea = [];
+    CasFilterState.ae = []; CasFilterState.account = []; CasFilterState.solArea = []; CasFilterState.segment = [];
     renderCasFilterBar(cards);
     window.HorizonApp?.rerenderCas();
   });
@@ -37,6 +42,7 @@ function renderCasFilterBar(cards) {
   wireTypeAhead('cas-filter-ae',      aeVals,      'ae',      CasFilterState, () => window.HorizonApp?.rerenderCas());
   wireTypeAhead('cas-filter-account', accountVals, 'account', CasFilterState, () => window.HorizonApp?.rerenderCas());
   wireTypeAhead('cas-filter-solarea', solAreaVals, 'solArea', CasFilterState, () => window.HorizonApp?.rerenderCas());
+  wireTypeAhead('cas-filter-segment', segmentVals, 'segment', CasFilterState, () => window.HorizonApp?.rerenderCas());
 }
 
 function _casTypeaheadHtml(id, placeholder) {
@@ -54,6 +60,7 @@ function applyCasFilters(cards) {
     if (CasFilterState.ae.length      && !CasFilterState.ae.includes(c.sae))             return false;
     if (CasFilterState.account.length && !CasFilterState.account.includes(c.customerName)) return false;
     if (CasFilterState.solArea.length && !CasFilterState.solArea.includes(c.l2))           return false;
+    if (CasFilterState.segment.length && !CasFilterState.segment.includes(c.salesSegment)) return false;
     return true;
   });
 }
