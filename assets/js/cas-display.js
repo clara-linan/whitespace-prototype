@@ -161,7 +161,7 @@ function buildCasQualifiedRow(card, tabContext) {
     <span class="opp-sales-segment">${escapeHtml(card.salesSegment || '')}</span>
     <span class="opp-eligible-acv">${formatUSD(card.cloudifiedAcv)}</span>
     <span class="opp-solution-count">${card.numOpps}</span>
-    <span></span>
+    <span class="opp-card-value">${card.oppValue != null ? formatUSD(card.oppValue) : '—'}</span>
     <span></span>
     <span class="opp-group-buttons">
       <button class="btn-undo cas-undo-btn" data-key="${escapeHtml(card.cardKey)}">Undo</button>
