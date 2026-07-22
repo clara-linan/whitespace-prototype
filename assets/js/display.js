@@ -228,20 +228,20 @@ function buildQualifiedCardRow(cardGroups, tabContext) {
 
   row.innerHTML = `
     <span></span>
-    <span class="sol-customer-name">${escapeHtml(first.customerName)}</span>
-    <span class="sol-area">${escapeHtml(solArea)}</span>
+    <span class="opp-customer-name">${escapeHtml(first.customerName)}</span>
+    <span class="opp-sol-area">${escapeHtml(solArea)}</span>
     <span class="opp-ae">${escapeHtml(first.sae || 'Unassigned')}</span>
     <span class="opp-sales-segment">${escapeHtml(first.salesSegment || '')}</span>
-    <span class="sol-eligible-acv">${formatUSD(totalAcv)}</span>
-    <span style="font-size:12px;color:var(--grey-6);text-align:center">${oppCount}</span>
+    <span class="opp-eligible-acv">${formatUSD(totalAcv)}</span>
+    <span class="opp-solution-count">${oppCount}</span>
     <select class="recommendation-select" data-cardkey="${escapeHtml(cardKey)}">
       <option value="Standard"${rec === 'Standard' ? ' selected' : ''}>Standard</option>
       <option value="Enhanced"${rec === 'Enhanced' ? ' selected' : ''}>Enhanced</option>
     </select>
-    <span class="sol-opp-value" data-cardkey="${escapeHtml(cardKey)}">${formatUSD(oppValue)}</span>
-    ${reasonHtml}
-    ${histBadge}
-    <span class="sol-actions">
+    <span class="opp-card-value" data-cardkey="${escapeHtml(cardKey)}">${formatUSD(oppValue)}</span>
+    <span class="opp-group-buttons">
+      ${reasonHtml}
+      ${histBadge}
       <button class="btn-undo" data-keys="${escapeHtml(JSON.stringify(groupKeys))}">Undo</button>
     </span>
   `;
