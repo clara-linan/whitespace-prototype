@@ -224,6 +224,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ─── Qualify Out modal ───────────────────────────────────────────────────────── */
 #modal-qualify-out,
+#cas-modal-qualify-in,
 #cas-modal-qualify-out {
   position: fixed;
   top: 50%;
@@ -238,6 +239,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   z-index: 401;
 }
 #modal-qualify-out h3,
+#cas-modal-qualify-in h3,
 #cas-modal-qualify-out h3 {
   font-size: 16px;
   font-weight: 700;
@@ -245,6 +247,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
   margin-bottom: 8px;
 }
 #modal-qualify-out p,
+#cas-modal-qualify-in p,
 #cas-modal-qualify-out p {
   font-size: 13px;
   color: var(--grey-6);
@@ -253,7 +256,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 .modal-error { color: var(--red-7); font-size: 12px; margin-top: 4px; font-weight: 600; }
 
-textarea {
+textarea,
+#cas-qualify-in-acv {
   font-family: inherit;
   font-size: 13px;
   width: 100%;
@@ -265,7 +269,8 @@ textarea {
   outline: none;
   line-height: 1.5;
 }
-textarea:focus { border-color: var(--brand-6); box-shadow: 0 0 0 3px rgba(37,99,168,.12); }
+textarea:focus,
+#cas-qualify-in-acv:focus { border-color: var(--brand-6); box-shadow: 0 0 0 3px rgba(37,99,168,.12); }
 
 /* ─── Page header ───────────────────────────────────────────────────────────── */
 .page-header {
