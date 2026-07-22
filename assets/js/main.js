@@ -26,6 +26,7 @@ window.HorizonApp = (() => {
     bindActionButtons();
     bindDownloadButtons();
     bindQualifyOutModal();
+    bindCasQualifyInModal();
     bindCasQualifyOutModal();
     bindUserAvatar();
   }
@@ -270,6 +271,42 @@ window.HorizonApp = (() => {
     _showQualifyOutModal(keys);
   }
 
+  // ── CAS qualify in modal ──────────────────────────────────────────────────────
+
+  let _pendingCasQualInKey = null;
+
+  function bindCasQualifyInModal() {
+    document.getElementById('cas-qualify-in-submit')?.addEventListener('click', () => {
+      const raw = document.getElementById('cas-qualify-in-acv')?.value ?? '';
+      const acv = parseFloat(raw);
+      if (!raw.trim() || isNaN(acv) || acv <= 0) {
+        document.getElementById('cas-qualify-in-error').hidden = false;
+        return;
+      }
+      if (_pendingCasQualInKey) {
+        CasState.qualifyIn(_pendingCasQualInKey, acv);
+        _hideCasQualifyInModal();
+        rerenderCas();
+      }
+    });
+    document.getElementById('cas-qualify-in-cancel')?.addEventListener('click', _hideCasQualifyInModal);
+  }
+
+  function _openCasQualifyInModal(key) {
+    _pendingCasQualInKey = key;
+    document.getElementById('cas-qualify-in-acv').value = '';
+    document.getElementById('cas-qualify-in-error').hidden = true;
+    document.getElementById('cas-modal-qualify-in').hidden = false;
+    document.getElementById('modal-overlay').hidden        = false;
+    document.getElementById('cas-qualify-in-acv').focus();
+  }
+
+  function _hideCasQualifyInModal() {
+    document.getElementById('cas-modal-qualify-in').hidden = true;
+    document.getElementById('modal-overlay').hidden        = true;
+    _pendingCasQualInKey = null;
+  }
+
   // ── CAS qualify out modal ─────────────────────────────────────────────────────
 
   let _pendingCasQualOutKey = null;
@@ -400,6 +437,7 @@ window.HorizonApp = (() => {
     rerenderCas,
     _qualifyGroupIn,
     _qualifyGroupOut,
+    _openCasQualifyInModal,
     _openCasQualifyOutModal,
   };
 

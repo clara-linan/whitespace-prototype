@@ -94,6 +94,24 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- CAS QUALIFY IN MODAL                                                      -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div id="cas-modal-qualify-in" hidden>
+  <h3>Qualify In — Enter Cloudified ACV</h3>
+  <p>Enter the expected cloudified ACV value for this opportunity.</p>
+  <label for="cas-qualify-in-acv" style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">
+    Cloudified ACV ($) <span style="color:var(--red-6)">*</span>
+  </label>
+  <input type="number" id="cas-qualify-in-acv" min="0" step="1000" placeholder="e.g. 250000"
+    style="width:100%;padding:8px 10px;border:1px solid var(--grey-4);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;outline:none;">
+  <div id="cas-qualify-in-error" class="modal-error" hidden>A valid ACV value is required.</div>
+  <div class="modal-actions">
+    <button id="cas-qualify-in-cancel" class="btn-ghost">Cancel</button>
+    <button id="cas-qualify-in-submit" class="btn-qualify-in" style="background:var(--green-6);color:#fff;border-color:var(--green-6);">Confirm Qualify In</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
 <!-- CAS QUALIFY OUT MODAL                                                     -->
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
 <div id="cas-modal-qualify-out" hidden>

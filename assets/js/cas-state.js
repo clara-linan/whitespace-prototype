@@ -54,10 +54,11 @@ const CasState = (() => {
     return _qualState.get(key)?.qualifyOutReason ?? null;
   }
 
-  function qualifyIn(key) {
+  function qualifyIn(key, acv) {
     if (!_qualState.has(key)) return false;
     _qualState.get(key).status           = 'qualified-in';
     _qualState.get(key).qualifyOutReason = null;
+    if (acv != null) _cards.get(key).cloudifiedAcv = acv;
     _save();
     return true;
   }

@@ -124,8 +124,7 @@ function buildCasWhitespaceRow(card) {
   `;
 
   row.querySelector('.cas-qualify-in-btn').addEventListener('click', () => {
-    CasState.qualifyIn(card.cardKey);
-    window.HorizonApp?.rerenderCas();
+    window.HorizonApp?._openCasQualifyInModal(card.cardKey);
   });
 
   row.querySelector('.cas-qualify-out-btn').addEventListener('click', () => {
